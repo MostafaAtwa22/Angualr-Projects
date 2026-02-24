@@ -1,0 +1,50 @@
+<div class="calendar-container">
+    <div class="calendar">
+        <div class="calendar-header">
+            <button (click)="prevMonth()" aria-label="Previous Month">←</button>
+            <h2>{{ firstDayOfActiveMonth().toFormat('MMMM yyyy') }}</h2>
+            <button (click)="nextMonth()" aria-label="Next Month">→</button>
+        </div>
+        <div class="calendar-headline-month">
+            {{firstDayOfActiveMonth().monthShort}},
+            {{firstDayOfActiveMonth().year}}
+        </div>
+        <div class="calendar-body">
+            <div class="calendar-weekdays">
+                @for (day of weekDays(); track day) {
+                <div class="calendar-weekday">{{ day }}</div>
+                }
+            </div>
+            <div class="calendar-days">
+                @for (day of daysOfMonth(); track day) {
+                <div class="calendar-day" (click)="activeDay.set(day)" 
+                    [class.today]="day.hasSame(today(), 'day')"
+                    [class.outside]="day.month !== firstDayOfActiveMonth().month"
+                    [ngClass]="{'active-day': activeDay()?.toISODate() === day.toISODate()}">
+                    {{ day.day }}
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="schedule">
+        <div class="schedule-headline">
+            @if (activeDay(); as activeDay) {
+                <div>{{ activeDay.toLocaleString(DATE_MED) }}</div>
+            } @else {
+                <div>Select a day</div>
+            }
+        </div>
+        @if(activeDay() && activeDayMeetings().length > 0) {
+            <div class="schedule-body">
+                @for (meeting of activeDayMeetings(); track meeting) {
+                    <div class="meeting">{{ meeting }}</div>
+                }
+            </div>
+        } @else {
+            <div class="schedule-body">
+                <div class="meeting-empty">No meetings</div>
+            </div>
+        }
+    </div>
+</div>
